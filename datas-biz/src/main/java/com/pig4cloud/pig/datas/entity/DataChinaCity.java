@@ -59,67 +59,67 @@ public class DataChinaCity extends BaseEntity {
      * 本土新增
      */
     @Schema(description ="本土新增")
-    private String nativeRelative;
+    private Long nativeRelative;
 
     /**
      * 累计无症状
      */
     @Schema(description ="累计无症状")
-    private String asymptomatic;
+    private Long asymptomatic;
 
     /**
      * 新增无症状
      */
     @Schema(description ="新增无症状")
-    private String asymptomaticRelative;
+    private Long asymptomaticRelative;
 
     /**
      * 累计确诊
      */
     @Schema(description ="累计确诊")
-    private String confirmed;
+    private Long confirmed;
 
     /**
      * 新增确诊
      */
     @Schema(description ="新增确诊")
-    private String confirmedRelative;
+    private Long confirmedRelative;
 
     /**
      * 累计死亡
      */
     @Schema(description ="累计死亡")
-    private String died;
+    private Long died;
 
     /**
      * 新增死亡
      */
     @Schema(description ="新增死亡")
-    private String diedRelative;
+    private Long diedRelative;
 
     /**
      * 现有确诊
      */
     @Schema(description ="现有确诊")
-    private String curConfirm;
+    private Long curConfirm;
 
     /**
      * 累计治愈
      */
     @Schema(description ="累计治愈")
-    private String crued;
+    private Long crued;
 
     /**
      * 新增治愈
      */
     @Schema(description ="新增治愈")
-    private String cruedRelative;
+    private Long cruedRelative;
 
     /**
      * 城市代号
      */
     @Schema(description ="城市代号")
-    private String cityCode;
+    private Long cityCode;
 
     /**
      * 行政区编码

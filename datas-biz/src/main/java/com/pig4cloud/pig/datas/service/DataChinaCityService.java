@@ -20,6 +20,9 @@ package com.pig4cloud.pig.datas.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.pig4cloud.pig.datas.entity.DataChinaCity;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 疫情数据表
  *
@@ -28,4 +31,5 @@ import com.pig4cloud.pig.datas.entity.DataChinaCity;
  */
 public interface DataChinaCityService extends IService<DataChinaCity> {
 
+    List<Map<String, Object>> getOverview(String date);
 }

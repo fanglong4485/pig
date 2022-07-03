@@ -17,6 +17,18 @@
 
 
     <dependencies>
+        <!--ShardingSphere 读写分离-->
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
+            <version>5.1.2</version>
+        </dependency>
+
+        <!--websocket支持包-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
         <!--必备: 依赖api模块-->
         <dependency>
             <groupId>com.pig4cloud</groupId>
