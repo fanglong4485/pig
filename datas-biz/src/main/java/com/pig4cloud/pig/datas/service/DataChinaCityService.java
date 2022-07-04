@@ -18,6 +18,8 @@
 package com.pig4cloud.pig.datas.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.pig4cloud.pig.datas.Vo.CityInfo;
+import com.pig4cloud.pig.datas.Vo.RadarVo;
 import com.pig4cloud.pig.datas.entity.DataChinaCity;
 
 import java.util.List;
@@ -32,4 +34,10 @@ import java.util.Map;
 public interface DataChinaCityService extends IService<DataChinaCity> {
 
     List<Map<String, Object>> getOverview(String date);
+
+    CityInfo getCityInfo(String date);
+
+    List<?> getRankingInfo(String date);
+
+    RadarVo getRadarData(String date);
 }
