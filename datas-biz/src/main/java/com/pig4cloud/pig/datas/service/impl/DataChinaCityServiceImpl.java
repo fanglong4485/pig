@@ -31,6 +31,7 @@ import com.pig4cloud.pig.datas.service.DataChinaCityService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -169,6 +170,56 @@ public class DataChinaCityServiceImpl extends ServiceImpl<DataChinaCityMapper, D
 
         return buildRadarVo(todayList.get(0), yesterdayList.get(0));
 
+    }
+
+    /**
+     * 根据日期查询福建省前有确诊
+     * @param date 日期
+     * @return 现有确诊集合
+     */
+    @Override
+    public List<Long> getMapData(String date) {
+        List<DataChinaCity> cityList = dataChinaCityMapper.selectList(Wrappers.<DataChinaCity>lambdaQuery()
+                .select(DataChinaCity::getCurConfirm, DataChinaCity::getCity)
+                .eq(DataChinaCity::getPro, "福建")
+                .likeRight(DataChinaCity::getCreateTime, date));
+
+        List<Long> integers = new ArrayList<>();
+        for (DataChinaCity city : cityList) {
+            switch (city.getCity()) {
+                case ("福州"):
+                    integers.set(0, city.getCurConfirm());
+                    break;
+                case ("厦门"):
+                    integers.set(1, city.getCurConfirm());
+                    break;
+                case ("漳州"):
+                    integers.set(2, city.getCurConfirm());
+                    break;
+                case ("泉州"):
+                    integers.set(3, city.getCurConfirm());
+                    break;
+                case ("三明"):
+                    integers.set(4, city.getCurConfirm());
+                    break;
+                case ("莆田"):
+                    integers.set(5, city.getCurConfirm());
+                    break;
+                case ("南平"):
+                    integers.set(6, city.getCurConfirm());
+                    break;
+                case ("龙岩"):
+                    integers.set(7, city.getCurConfirm());
+                    break;
+                case ("宁德"):
+                    integers.set(8, city.getCurConfirm());
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return integers;
     }
 
     /**

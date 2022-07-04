@@ -84,4 +84,14 @@ public class BigScreenController {
             return R.ok(result);
         }
     }
+
+    @GetMapping("/mapData")
+    public R getMapData(@PathParam("date") String date){
+        List<Long> result = dataChinaCityService.getMapData(date);
+        if (ObjectUtil.isNull(result)){
+            return R.failed("市级数据查询为空！");
+        } else {
+            return R.ok(result);
+        }
+    }
 }
