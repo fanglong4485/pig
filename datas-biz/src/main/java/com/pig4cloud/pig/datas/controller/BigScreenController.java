@@ -75,6 +75,7 @@ public class BigScreenController {
         }
     }
 
+    @Operation(summary = "雷达图", description = "雷达图")
     @GetMapping("/radarData")
     public R getRadarData(@PathParam("date") String date){
         RadarVo result = dataChinaCityService.getRadarData(date);
@@ -85,6 +86,7 @@ public class BigScreenController {
         }
     }
 
+    @Operation(summary = "福建现有确诊", description = "福建现有确诊")
     @GetMapping("/mapData")
     public R getMapData(@PathParam("date") String date){
         List<Long> result = dataChinaCityService.getMapData(date);
@@ -94,4 +96,6 @@ public class BigScreenController {
             return R.ok(result);
         }
     }
+
+
 }
