@@ -47,4 +47,9 @@ public class test {
         List<Map<String, Object>> cityList = dataChinaCityMapper.selectMaps(wrapper);
         System.out.println(cityList);
     }
+
+    @Test
+    void test2(){
+        dataChinaCityMapper.insert(new DataChinaCity((long) 2,"test2"));
+    }
 }

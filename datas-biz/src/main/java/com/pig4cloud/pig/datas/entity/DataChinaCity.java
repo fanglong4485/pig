@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.pig4cloud.pig.common.mybatis.base.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -34,6 +35,7 @@ import lombok.EqualsAndHashCode;
 @TableName("data_china_city")
 @EqualsAndHashCode(callSuper = true)
 @Schema(description = "疫情数据表")
+@AllArgsConstructor
 public class DataChinaCity extends BaseEntity {
 
     /**
@@ -128,4 +130,8 @@ public class DataChinaCity extends BaseEntity {
     private String administrativeCode;
 
 
+    public DataChinaCity(Long i, String test2) {
+        this.id = i;
+        this.pro = test2;
+    }
 }

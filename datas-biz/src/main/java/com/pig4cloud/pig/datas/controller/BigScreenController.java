@@ -1,19 +1,19 @@
 package com.pig4cloud.pig.datas.controller;
 
-import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.pig4cloud.pig.common.core.util.R;
 import com.pig4cloud.pig.datas.Vo.CityInfo;
 import com.pig4cloud.pig.datas.Vo.RadarVo;
+import com.pig4cloud.pig.datas.entity.DataInOutNum;
 import com.pig4cloud.pig.datas.service.DataChinaCityService;
+import com.pig4cloud.pig.datas.service.DataInOutNumService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +35,8 @@ import java.util.Map;
 public class BigScreenController {
 
     private final DataChinaCityService dataChinaCityService;
+
+    private final DataInOutNumService inOutNumService;
 
     /**
      * 数据概览
@@ -86,7 +88,7 @@ public class BigScreenController {
         }
     }
 
-    @Operation(summary = "福建现有确诊", description = "福建现有确诊")
+    @Operation(summary = "福建现有确诊地图", description = "福建现有确诊地图")
     @GetMapping("/mapData")
     public R getMapData(@PathParam("date") String date){
         List<Long> result = dataChinaCityService.getMapData(date);
@@ -95,6 +97,30 @@ public class BigScreenController {
         } else {
             return R.ok(result);
         }
+    }
+
+
+    @Operation(summary = "危险等级地图", description = "危险等级地图")
+    @GetMapping("/dangerLevel")
+    public R getDangerLevel(@PathParam("date") String date) {
+        //DangerLevel result = dangerLevelService.getOne(new QueryWrapper<DangerLevel>().likeRight("date", date));
+        //if (ObjectUtil.isNull(result)){
+        //    return R.failed("危险等级查询为空！");
+        //} else {
+        //    return R.ok(result);
+        //}
+        return R.failed();
+    }
+
+    @GetMapping("/flyLine")
+    public R getFlyLine(@PathParam("date") String date) {
+        List<DataInOutNum> result = inOutNumService.getFlyLineData(date);
+        if (ObjectUtil.isNull(result)) {
+            return R.failed("飞线数据查询为空！");
+        } else {
+            return R.ok(result);
+        }
+
     }
 
 
