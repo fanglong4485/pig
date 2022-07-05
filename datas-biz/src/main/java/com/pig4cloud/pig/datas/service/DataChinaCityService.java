@@ -42,4 +42,6 @@ public interface DataChinaCityService extends IService<DataChinaCity> {
     RadarVo getRadarData(String date);
 
     List<Long> getMapData(String date);
+
+    Map getCitiesTrend();
 }

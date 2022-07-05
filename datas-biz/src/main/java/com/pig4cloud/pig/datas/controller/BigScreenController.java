@@ -112,6 +112,8 @@ public class BigScreenController {
         return R.failed();
     }
 
+
+    @Operation(summary = "飞线数据", description = "飞线数据")
     @GetMapping("/flyLine")
     public R getFlyLine(@PathParam("date") String date) {
         List<DataInOutNum> result = inOutNumService.getFlyLineData(date);
@@ -123,5 +125,25 @@ public class BigScreenController {
 
     }
 
+    //@Operation(summary = "总结数据", description = "总结数据")
+    //@GetMapping("/summary")
+    //public R getSummary(@PathParam("date") String date) {
+    //    List<Summary> result = summaryService.list(new QueryWrapper<Summary>().eq("create_time", date));
+    //
+    //    if (result.size() == 0) {
+    //        return R.failed("总结数据查询为空！");
+    //    } else {
+    //        return R.ok(result);
+    //    }
+    //
+    //}
+
+
+    @Operation(summary = "趋势折线图", description = "趋势折线图")
+    @GetMapping("/citiesTrend")
+    public R getCitiesTrend() {
+        Map result = dataChinaCityService.getCitiesTrend();
+        return R.ok(result);
+    }
 
 }

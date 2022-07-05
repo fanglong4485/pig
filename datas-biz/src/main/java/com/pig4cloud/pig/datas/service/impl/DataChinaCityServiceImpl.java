@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.pig4cloud.pig.datas.Utils.CityId;
 import com.pig4cloud.pig.datas.Utils.DatasUtils;
 import com.pig4cloud.pig.datas.Vo.CityInfo;
 import com.pig4cloud.pig.datas.Vo.RadarVo;
@@ -32,7 +33,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
+import java.time.ZoneId;
 import java.util.*;
+
+import static com.pig4cloud.pig.datas.Utils.DatasUtils.getDate;
 
 /**
  * 疫情数据表
@@ -72,7 +76,7 @@ public class DataChinaCityServiceImpl extends ServiceImpl<DataChinaCityMapper, D
                 ,"IFNULL(SUM(died),0) as died")
                 .eq("pro","福建");
         if (CharSequenceUtil.hasEmpty(date)){
-            wrapper.likeRight("create_time", DatasUtils.getDate(new Date()));
+            wrapper.likeRight("create_time", getDate(new Date()));
         } else {
             wrapper.likeRight("create_time",date);
         }
@@ -220,6 +224,32 @@ public class DataChinaCityServiceImpl extends ServiceImpl<DataChinaCityMapper, D
         }
 
         return integers;
+    }
+
+    @Override
+    public Map getCitiesTrend() {
+        HashMap<String, List<?>> map = new HashMap<>();
+        List<String> dateList = new ArrayList<>();
+        for (CityId cityId : CityId.values()) {
+            List<DataChinaCity> cityList = super.list(Wrappers.<DataChinaCity>lambdaQuery()
+                    .select(DataChinaCity::getCurConfirm,DataChinaCity::getCreateTime)
+                    .eq(DataChinaCity::getCity,cityId.getCityName())
+                    .between(DataChinaCity::getCreateTime,"2022-03-01",DatasUtils.getPlusDate(getDate(new Date()),-1))
+                    .orderByAsc(DataChinaCity::getCreateTime));
+            List<Long> confirmList = new ArrayList<>();
+            for (DataChinaCity city : cityList) {
+                confirmList.add(city.getCurConfirm());
+                //ZoneId.systemDefault() 生成系统默认时区。不大清楚是不是对的。
+                String date = getDate(Date.from(city.getCreateTime().atZone(ZoneId.systemDefault()).toInstant()));
+                if (!dateList.contains(date)) {
+                    dateList.add(date);
+                }
+            }
+            map.put(cityId.getCityName(), confirmList);
+        }
+        map.put("date", dateList);
+        return map;
+
     }
 
     /**
