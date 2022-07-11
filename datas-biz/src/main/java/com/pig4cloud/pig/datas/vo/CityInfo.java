@@ -1,4 +1,4 @@
-package com.pig4cloud.pig.datas.Vo;
+package com.pig4cloud.pig.datas.vo;
 
 import lombok.Data;
 

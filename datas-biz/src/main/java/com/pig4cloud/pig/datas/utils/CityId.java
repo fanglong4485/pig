@@ -1,4 +1,4 @@
-package com.pig4cloud.pig.datas.Utils;
+package com.pig4cloud.pig.datas.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

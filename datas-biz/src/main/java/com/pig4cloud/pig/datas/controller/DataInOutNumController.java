@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pig4cloud.pig.common.core.util.R;
 import com.pig4cloud.pig.common.log.annotation.SysLog;
+import com.pig4cloud.pig.common.security.annotation.Inner;
 import com.pig4cloud.pig.datas.entity.DataInOutNum;
 import com.pig4cloud.pig.datas.service.DataInOutNumService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -112,4 +113,12 @@ public class DataInOutNumController {
         return R.ok(dataInOutNumService.removeById(id));
     }
 
+
+	@Inner(value = false)
+    @GetMapping("/query")
+    public R query(){
+		DataInOutNum dataInOutNum = new DataInOutNum();
+		dataInOutNum.setCityName("超级城市！！");
+		return R.ok(dataInOutNum,"成功接受请求");
+    }
 }

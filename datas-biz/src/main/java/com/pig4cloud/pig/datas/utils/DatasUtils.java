@@ -1,4 +1,4 @@
-package com.pig4cloud.pig.datas.Utils;
+package com.pig4cloud.pig.datas.utils;
 
 import cn.hutool.core.date.DateUtil;
 import lombok.experimental.UtilityClass;

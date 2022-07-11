@@ -18,8 +18,8 @@
 package com.pig4cloud.pig.datas.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.pig4cloud.pig.datas.Vo.CityInfo;
-import com.pig4cloud.pig.datas.Vo.RadarVo;
+import com.pig4cloud.pig.datas.vo.CityInfo;
+import com.pig4cloud.pig.datas.vo.RadarVo;
 import com.pig4cloud.pig.datas.entity.DataChinaCity;
 
 import java.util.List;

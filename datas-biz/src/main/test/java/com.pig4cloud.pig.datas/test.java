@@ -2,12 +2,10 @@ package com.pig4cloud.pig.datas;
 
 import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.pig4cloud.pig.datas.Utils.DatasUtils;
+import com.pig4cloud.pig.datas.utils.DatasUtils;
 import com.pig4cloud.pig.datas.entity.DataChinaCity;
 import com.pig4cloud.pig.datas.mapper.DataChinaCityMapper;
-import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.omg.CORBA.StringHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
