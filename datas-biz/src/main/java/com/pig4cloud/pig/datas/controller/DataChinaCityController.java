@@ -17,12 +17,17 @@
 
 package com.pig4cloud.pig.datas.controller;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pig4cloud.pig.common.core.util.R;
 import com.pig4cloud.pig.common.log.annotation.SysLog;
+import com.pig4cloud.pig.common.security.annotation.Inner;
+import com.pig4cloud.pig.datas.dto.DataChinaCityDto;
+import com.pig4cloud.pig.datas.dto.ProvinceDto;
 import com.pig4cloud.pig.datas.entity.DataChinaCity;
 import com.pig4cloud.pig.datas.service.DataChinaCityService;
+import com.pig4cloud.pig.datas.vo.ProvinceVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -30,6 +35,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 /**
@@ -111,5 +118,50 @@ public class DataChinaCityController {
     public R removeById(@PathVariable Long id) {
         return R.ok(dataChinaCityService.removeById(id));
     }
+
+
+	@Inner
+    @GetMapping("/query")
+	public R query(DataChinaCity dataChinaCity){
+		List<DataChinaCity> list = dataChinaCityService.queryCities(dataChinaCity);
+		if (list.isEmpty()) {
+			return R.failed(list,"查询失败！");
+		} else {
+			return R.ok(list);
+		}
+	}
+
+	@Inner
+	@GetMapping("/queryRecent")
+	public R queryRecent(DataChinaCityDto dataChinaCityDto){
+		List<DataChinaCity> list = dataChinaCityService.queryRecent(dataChinaCityDto);
+		if (list.isEmpty()) {
+			return R.failed(list,"查询失败！");
+		} else {
+			return R.ok(list);
+		}
+	}
+
+	@Inner
+	@GetMapping("/queryLocatedCities")
+	public R queryLocatedCities(DataChinaCityDto dataChinaCityDto){
+		List<DataChinaCity> list = dataChinaCityService.queryLocatedCities(dataChinaCityDto);
+		if (list.isEmpty()) {
+			return R.failed(list,"查询失败！");
+		} else {
+			return R.ok(list);
+		}
+	}
+
+	@Inner
+	@GetMapping("/queryTrend")
+	public R queryTrend(ProvinceDto provinceDto){
+		ProvinceVo result = dataChinaCityService.queryTrend(provinceDto);
+		if (ObjectUtil.isNull(result)) {
+			return R.failed(result,"查询失败！");
+		} else {
+			return R.ok(result);
+		}
+	}
 
 }

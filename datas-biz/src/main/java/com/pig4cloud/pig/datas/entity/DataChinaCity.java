@@ -16,14 +16,13 @@
  */
 package com.pig4cloud.pig.datas.entity;
 
+import cn.hutool.core.date.LocalDateTimeUtil;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.pig4cloud.pig.common.mybatis.base.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 /**
  * 疫情数据表
@@ -36,6 +35,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Schema(description = "疫情数据表")
 @AllArgsConstructor
+@NoArgsConstructor
 public class DataChinaCity extends BaseEntity {
 
     /**
@@ -134,4 +134,9 @@ public class DataChinaCity extends BaseEntity {
         this.id = i;
         this.pro = test2;
     }
+
+	public DataChinaCity(String cityName, String date) {
+		this.city = cityName;
+		super.setCreateTime(LocalDateTimeUtil.parse(date,"yyyy-MM-dd"));
+	}
 }

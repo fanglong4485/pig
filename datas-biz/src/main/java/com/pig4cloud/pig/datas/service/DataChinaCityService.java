@@ -18,7 +18,10 @@
 package com.pig4cloud.pig.datas.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.pig4cloud.pig.datas.dto.DataChinaCityDto;
+import com.pig4cloud.pig.datas.dto.ProvinceDto;
 import com.pig4cloud.pig.datas.vo.CityInfo;
+import com.pig4cloud.pig.datas.vo.ProvinceVo;
 import com.pig4cloud.pig.datas.vo.RadarVo;
 import com.pig4cloud.pig.datas.entity.DataChinaCity;
 
@@ -44,4 +47,12 @@ public interface DataChinaCityService extends IService<DataChinaCity> {
     List<Long> getMapData(String date);
 
     Map getCitiesTrend();
+
+	List<DataChinaCity> queryCities(DataChinaCity dataChinaCity);
+
+	List<DataChinaCity> queryRecent(DataChinaCityDto dataChinaCity);
+
+	List<DataChinaCity> queryLocatedCities(DataChinaCityDto dataChinaCityDto);
+
+	ProvinceVo queryTrend(ProvinceDto provinceDto);
 }

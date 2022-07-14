@@ -17,13 +17,15 @@
 
 package com.pig4cloud.pig.datas.controller;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pig4cloud.pig.common.core.util.R;
 import com.pig4cloud.pig.common.log.annotation.SysLog;
 import com.pig4cloud.pig.common.security.annotation.Inner;
-import com.pig4cloud.pig.datas.entity.DataInOutNum;
-import com.pig4cloud.pig.datas.service.DataInOutNumService;
+import com.pig4cloud.pig.datas.entity.DataChinaCity;
+import com.pig4cloud.pig.datas.entity.DataInOutNumCurve;
+import com.pig4cloud.pig.datas.service.DataInOutNumCurveService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -39,28 +41,28 @@ import java.util.List;
  * 
  *
  * @author fanglong
- * @date 2022-07-05 14:53:30
+ * @date 2022-07-12 18:10:52
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/datainoutnum" )
+@RequestMapping("/datainoutnumcurve" )
 @Tag(name = "管理")
 @SecurityRequirement(name = HttpHeaders.AUTHORIZATION)
-public class DataInOutNumController {
+public class DataInOutNumCurveController {
 
-    private final  DataInOutNumService dataInOutNumService;
+    private final  DataInOutNumCurveService dataInOutNumCurveService;
 
     /**
      * 分页查询
      * @param page 分页对象
-     * @param dataInOutNum 
+     * @param dataInOutNumCurve 
      * @return
      */
     @Operation(summary = "分页查询", description = "分页查询")
     @GetMapping("/page" )
-    @PreAuthorize("@pms.hasPermission('datas_datainoutnum_get')" )
-    public R getDataInOutNumPage(Page page, DataInOutNum dataInOutNum) {
-        return R.ok(dataInOutNumService.page(page, Wrappers.query(dataInOutNum)));
+    @PreAuthorize("@pms.hasPermission('datas_datainoutnumcurve_get')" )
+    public R getDataInOutNumCurvePage(Page page, DataInOutNumCurve dataInOutNumCurve) {
+        return R.ok(dataInOutNumCurveService.page(page, Wrappers.query(dataInOutNumCurve)));
     }
 
 
@@ -71,35 +73,35 @@ public class DataInOutNumController {
      */
     @Operation(summary = "通过id查询", description = "通过id查询")
     @GetMapping("/{id}" )
-    @PreAuthorize("@pms.hasPermission('datas_datainoutnum_get')" )
+    @PreAuthorize("@pms.hasPermission('datas_datainoutnumcurve_get')" )
     public R getById(@PathVariable("id" ) Integer id) {
-        return R.ok(dataInOutNumService.getById(id));
+        return R.ok(dataInOutNumCurveService.getById(id));
     }
 
     /**
      * 新增
-     * @param dataInOutNum 
+     * @param dataInOutNumCurve 
      * @return R
      */
     @Operation(summary = "新增", description = "新增")
     @SysLog("新增" )
     @PostMapping
-    @PreAuthorize("@pms.hasPermission('datas_datainoutnum_add')" )
-    public R save(@RequestBody DataInOutNum dataInOutNum) {
-        return R.ok(dataInOutNumService.save(dataInOutNum));
+    @PreAuthorize("@pms.hasPermission('datas_datainoutnumcurve_add')" )
+    public R save(@RequestBody DataInOutNumCurve dataInOutNumCurve) {
+        return R.ok(dataInOutNumCurveService.save(dataInOutNumCurve));
     }
 
     /**
      * 修改
-     * @param dataInOutNum 
+     * @param dataInOutNumCurve 
      * @return R
      */
     @Operation(summary = "修改", description = "修改")
     @SysLog("修改" )
     @PutMapping
-    @PreAuthorize("@pms.hasPermission('datas_datainoutnum_edit')" )
-    public R updateById(@RequestBody DataInOutNum dataInOutNum) {
-        return R.ok(dataInOutNumService.updateById(dataInOutNum));
+    @PreAuthorize("@pms.hasPermission('datas_datainoutnumcurve_edit')" )
+    public R updateById(@RequestBody DataInOutNumCurve dataInOutNumCurve) {
+        return R.ok(dataInOutNumCurveService.updateById(dataInOutNumCurve));
     }
 
     /**
@@ -110,37 +112,22 @@ public class DataInOutNumController {
     @Operation(summary = "通过id删除", description = "通过id删除")
     @SysLog("通过id删除" )
     @DeleteMapping("/{id}" )
-    @PreAuthorize("@pms.hasPermission('datas_datainoutnum_del')" )
+    @PreAuthorize("@pms.hasPermission('datas_datainoutnumcurve_del')" )
     public R removeById(@PathVariable Integer id) {
-        return R.ok(dataInOutNumService.removeById(id));
+        return R.ok(dataInOutNumCurveService.removeById(id));
     }
 
-	@Inner
-    @GetMapping("/query")
-    public R query(DataInOutNum dataInOutNum){
-		List<DataInOutNum> list = dataInOutNumService.list(Wrappers.lambdaQuery(dataInOutNum));
-		if (!list.isEmpty()){
-			return R.ok(list);
+
+
+    @Inner
+	@GetMapping("/query")
+	public R query(DataInOutNumCurve dataInOutNumCurve){
+		DataInOutNumCurve data = dataInOutNumCurveService.getOne(Wrappers.lambdaQuery(dataInOutNumCurve));
+		if (ObjectUtil.isNull(data)) {
+			return R.failed(data,"查询失败！");
 		} else {
-			return R.failed(dataInOutNum,"查询异常！");
+			return R.ok(data);
 		}
-    }
 
-	@Inner
-	@GetMapping("/queryAttentionCities")
-	public R queryAttentionCities(DataInOutNum dataInOutNum){
-		List<DataInOutNum> list = dataInOutNumService.list(Wrappers.<DataInOutNum>lambdaQuery()
-				.select(DataInOutNum::getCityName, DataInOutNum::getValue)
-				.eq(DataInOutNum::getType, dataInOutNum.getType())
-				.eq(DataInOutNum::getTargetCity, dataInOutNum.getTargetCity())
-				.eq(DataInOutNum::getDate, dataInOutNum.getDate())
-				.in(DataInOutNum::getCityName, "莆田市", "泉州市", "南平市", "厦门市", "漳州市", "宁德市", "三明市", "福州市", "龙岩市")
-				.gt(DataInOutNum::getValue, dataInOutNum.getValue())
-				.orderByDesc(DataInOutNum::getValue)
-		);
-		if (list.isEmpty()){
-			return R.failed(dataInOutNum,"注意城市查询失败！");
-		}
-		return R.ok(list,"成功接受请求");
 	}
 }

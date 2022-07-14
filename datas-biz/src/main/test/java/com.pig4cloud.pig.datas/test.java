@@ -50,4 +50,14 @@ public class test {
     void test2(){
         dataChinaCityMapper.insert(new DataChinaCity((long) 2,"test2"));
     }
+
+    @Test
+	void test3(){
+		QueryWrapper<DataChinaCity> wrapper = new QueryWrapper<>();
+		wrapper.select("IFNULL(SUM(confirmed_relative),0) as confirmedRelativeSum")
+				.between("create_time","2022-03-01","2022-03-27")
+				.orderByDesc("create_time");
+		List<Map<String, Object>> maps = dataChinaCityMapper.selectMaps(wrapper);
+		System.out.println(maps);
+	}
 }

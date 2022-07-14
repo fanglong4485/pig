@@ -21,9 +21,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.pig4cloud.pig.datas.dto.DataChinaCityDto;
+import com.pig4cloud.pig.datas.dto.ProvinceDto;
 import com.pig4cloud.pig.datas.utils.CityId;
 import com.pig4cloud.pig.datas.utils.DatasUtils;
 import com.pig4cloud.pig.datas.vo.CityInfo;
+import com.pig4cloud.pig.datas.vo.ProvinceVo;
 import com.pig4cloud.pig.datas.vo.RadarVo;
 import com.pig4cloud.pig.datas.vo.Ranking;
 import com.pig4cloud.pig.datas.entity.DataChinaCity;
@@ -251,7 +254,50 @@ public class DataChinaCityServiceImpl extends ServiceImpl<DataChinaCityMapper, D
 
     }
 
-    /**
+	@Override
+	public List<DataChinaCity> queryCities(DataChinaCity dataChinaCity) {
+
+		return dataChinaCityMapper.selectList(Wrappers.<DataChinaCity>lambdaQuery()
+				//TODO 可能会因为类型原因导致出错
+				.likeRight(DataChinaCity::getCreateTime, dataChinaCity.getCreateTime())
+				.likeRight(DataChinaCity::getCity, dataChinaCity.getCity())
+		);
+	}
+
+	@Override
+	public List<DataChinaCity> queryRecent(DataChinaCityDto dataChinaCityDto) {
+		return dataChinaCityMapper.selectList(Wrappers.<DataChinaCity>lambdaQuery()
+				.select(DataChinaCity::getCity, DataChinaCity::getConfirmedRelative)
+				.eq(DataChinaCity::getPro, dataChinaCityDto.getPro())
+				.between(DataChinaCity::getCreateTime, DatasUtils.getPlusDate(dataChinaCityDto.getDate(), -3), dataChinaCityDto.getDate())
+				.orderByAsc(DataChinaCity::getCityCode)
+		);
+	}
+
+	@Override
+	public List<DataChinaCity> queryLocatedCities(DataChinaCityDto dataChinaCityDto) {
+		return dataChinaCityMapper.selectList(Wrappers.<DataChinaCity>lambdaQuery()
+				.select(DataChinaCity::getCity)
+				.likeRight(DataChinaCity::getCreateTime, dataChinaCityDto.getDate())
+				.eq(DataChinaCity::getPro,dataChinaCityDto.getPro())
+				.gt(DataChinaCity::getCurConfirm,dataChinaCityDto.getCurConfirm())
+		);
+	}
+
+	@Override
+	public ProvinceVo queryTrend(ProvinceDto provinceDto) {
+		QueryWrapper<DataChinaCity> wrapper = new QueryWrapper<>();
+		wrapper.select("IFNULL(SUM(confirmed_relative),0) as confirmedRelativeSum")
+				.between("create_time",provinceDto.getStartDate(),provinceDto.getEndDate())
+				.orderByDesc("create_time");
+		List<Map<String, Object>> maps = dataChinaCityMapper.selectMaps(wrapper);
+		Object confirmedRelativeSum = maps.get(0).get("confirmedRelativeSum");
+		ProvinceVo provinceVo = new ProvinceVo();
+		provinceVo.setConfirmedRelativeSum((Long) confirmedRelativeSum);
+		return provinceVo;
+	}
+
+	/**
      * 生成雷达视图对象
      * @param todayMap 今日数据
      * @param yesterdayMap 昨日数据
