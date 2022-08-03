@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.pig4cloud.pig.datas.dto.DataChinaCityDto;
 import com.pig4cloud.pig.datas.dto.ProvinceDto;
 import com.pig4cloud.pig.datas.utils.CityId;
-import com.pig4cloud.pig.datas.utils.DatasUtils;
+import com.pig4cloud.pig.datas.utils.DatesUtil;
 import com.pig4cloud.pig.datas.vo.CityInfo;
 import com.pig4cloud.pig.datas.vo.ProvinceVo;
 import com.pig4cloud.pig.datas.vo.RadarVo;
@@ -38,7 +38,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZoneId;
 import java.util.*;
 
-import static com.pig4cloud.pig.datas.utils.DatasUtils.getDate;
+import static com.pig4cloud.pig.datas.utils.DatesUtil.getDate;
 
 /**
  * 疫情数据表
@@ -171,7 +171,7 @@ public class DataChinaCityServiceImpl extends ServiceImpl<DataChinaCityMapper, D
                         //现有确诊
                         ,"IFNULL(SUM(cur_confirm),0) as curConfirm"
                 ).eq("pro","福建")
-                .likeRight("create_time",DatasUtils.getPlusDate(date,-1))
+                .likeRight("create_time", DatesUtil.getPlusDate(date,-1))
                 );
 
         return buildRadarVo(todayList.get(0), yesterdayList.get(0));
@@ -236,7 +236,7 @@ public class DataChinaCityServiceImpl extends ServiceImpl<DataChinaCityMapper, D
             List<DataChinaCity> cityList = super.list(Wrappers.<DataChinaCity>lambdaQuery()
                     .select(DataChinaCity::getCurConfirm,DataChinaCity::getCreateTime)
                     .eq(DataChinaCity::getCity,cityId.getCityName())
-                    .between(DataChinaCity::getCreateTime,"2022-03-01",DatasUtils.getPlusDate(getDate(new Date()),-1))
+                    .between(DataChinaCity::getCreateTime,"2022-03-01", DatesUtil.getPlusDate(getDate(new Date()),-1))
                     .orderByAsc(DataChinaCity::getCreateTime));
             List<Long> confirmList = new ArrayList<>();
             for (DataChinaCity city : cityList) {
@@ -269,7 +269,7 @@ public class DataChinaCityServiceImpl extends ServiceImpl<DataChinaCityMapper, D
 		return dataChinaCityMapper.selectList(Wrappers.<DataChinaCity>lambdaQuery()
 				.select(DataChinaCity::getCity, DataChinaCity::getConfirmedRelative)
 				.eq(DataChinaCity::getPro, dataChinaCityDto.getPro())
-				.between(DataChinaCity::getCreateTime, DatasUtils.getPlusDate(dataChinaCityDto.getDate(), -3), dataChinaCityDto.getDate())
+				.between(DataChinaCity::getCreateTime, DatesUtil.getPlusDate(dataChinaCityDto.getDate(), -3), dataChinaCityDto.getDate())
 				.orderByAsc(DataChinaCity::getCityCode)
 		);
 	}

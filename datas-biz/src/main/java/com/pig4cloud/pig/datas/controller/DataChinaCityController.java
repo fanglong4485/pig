@@ -17,6 +17,7 @@
 
 package com.pig4cloud.pig.datas.controller;
 
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -27,6 +28,9 @@ import com.pig4cloud.pig.datas.dto.DataChinaCityDto;
 import com.pig4cloud.pig.datas.dto.ProvinceDto;
 import com.pig4cloud.pig.datas.entity.DataChinaCity;
 import com.pig4cloud.pig.datas.service.DataChinaCityService;
+import com.pig4cloud.pig.datas.service.SAdministrativeDivisionsService;
+import com.pig4cloud.pig.datas.utils.CharUtil;
+import com.pig4cloud.pig.datas.vo.AreaDictVo;
 import com.pig4cloud.pig.datas.vo.ProvinceVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,6 +58,9 @@ public class DataChinaCityController {
 
     private final  DataChinaCityService dataChinaCityService;
 
+    private final SAdministrativeDivisionsService divisionsService;
+
+
     /**
      * 分页查询
      * @param page 分页对象
@@ -64,8 +71,21 @@ public class DataChinaCityController {
     @GetMapping("/page" )
     @PreAuthorize("@pms.hasPermission('datas_datachinacity_get')" )
     public R getDataChinaCityPage(Page page, DataChinaCity dataChinaCity) {
-        return R.ok(dataChinaCityService.page(page, Wrappers.query(dataChinaCity)));
-    }
+    	//判断dataChinaCity对象携带的查询参数是城市代号还是城市名
+		if (!CharUtil.isChinese(dataChinaCity.getPro())) {
+			//只需要城市名查询条件
+			String pcityCode = dataChinaCity.getCity();
+			AreaDictVo cityDict = divisionsService.areaTranslate(Long.parseLong(pcityCode));
+			String cityName = cityDict.getLabel();
+			//定义需要省、市命中，需要过滤掉的字。SAdministrativeDivisionsService表里的城市有："省","市","县","区" 等字，而DataChinaCity表没有。
+			String newCityName = CharSequenceUtil
+					.replace(cityName, "市", "")
+					.replace("区", "");
+			dataChinaCity.setCity(newCityName);
+			dataChinaCity.setPro(null);
+		}
+		return R.ok(dataChinaCityService.page(page, Wrappers.query(dataChinaCity)));
+	}
 
 
     /**

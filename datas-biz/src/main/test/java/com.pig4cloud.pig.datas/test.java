@@ -2,7 +2,8 @@ package com.pig4cloud.pig.datas;
 
 import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.pig4cloud.pig.datas.utils.DatasUtils;
+import com.pig4cloud.pig.datas.service.DataChinaCityService;
+import com.pig4cloud.pig.datas.utils.DatesUtil;
 import com.pig4cloud.pig.datas.entity.DataChinaCity;
 import com.pig4cloud.pig.datas.mapper.DataChinaCityMapper;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,9 @@ import java.util.Map;
 @SpringBootTest
 public class test {
 
+	@Autowired
+	private DataChinaCityService dataChinaCityService;
+
     @Autowired
     private DataChinaCityMapper dataChinaCityMapper;
     @Test
@@ -37,7 +41,7 @@ public class test {
                 ,"IFNULL(SUM(died),0) as died")//累计死亡
                 .eq("pro","福建");
         if (CharSequenceUtil.hasEmpty(date)){
-            wrapper.likeRight("create_time", DatasUtils.getDate(new Date()));
+            wrapper.likeRight("create_time", DatesUtil.getDate(new Date()));
         } else {
             wrapper.likeRight("create_time",date);
         }
@@ -59,5 +63,11 @@ public class test {
 				.orderByDesc("create_time");
 		List<Map<String, Object>> maps = dataChinaCityMapper.selectMaps(wrapper);
 		System.out.println(maps);
+	}
+
+	@Test
+	void test4(){
+		Map citiesTrend = dataChinaCityService.getCitiesTrend();
+		System.out.println(citiesTrend);
 	}
 }

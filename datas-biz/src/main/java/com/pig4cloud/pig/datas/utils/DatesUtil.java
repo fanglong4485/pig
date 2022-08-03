@@ -13,7 +13,7 @@ import java.util.Date;
  * @apiNote
  */
 @UtilityClass
-public class DatasUtils {
+public class DatesUtil {
     public static String getDate(Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         return formatter.format(date);
@@ -21,7 +21,7 @@ public class DatasUtils {
 
     public static String getPlusDate(String originDay, int days) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date originDate = DateUtil.parse(originDay);
+        Date originDate = cn.hutool.core.date.DateUtil.parse(originDay);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(originDate);
         calendar.add(Calendar.DATE, days);
