@@ -16,19 +16,21 @@
  */
 package com.pig4cloud.pig.datas.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.pig4cloud.pig.datas.dto.DataChinaCityDto;
 import com.pig4cloud.pig.datas.dto.ProvinceDto;
+import com.pig4cloud.pig.datas.requestObj.DataChinaCityQuery;
+import com.pig4cloud.pig.datas.service.SAdministrativeDivisionsService;
+import com.pig4cloud.pig.datas.utils.CharUtil;
 import com.pig4cloud.pig.datas.utils.CityId;
 import com.pig4cloud.pig.datas.utils.DatesUtil;
-import com.pig4cloud.pig.datas.vo.CityInfo;
-import com.pig4cloud.pig.datas.vo.ProvinceVo;
-import com.pig4cloud.pig.datas.vo.RadarVo;
-import com.pig4cloud.pig.datas.vo.Ranking;
+import com.pig4cloud.pig.datas.vo.*;
 import com.pig4cloud.pig.datas.entity.DataChinaCity;
 import com.pig4cloud.pig.datas.mapper.DataChinaCityMapper;
 import com.pig4cloud.pig.datas.service.DataChinaCityService;
@@ -51,6 +53,8 @@ import static com.pig4cloud.pig.datas.utils.DatesUtil.getDate;
 public class DataChinaCityServiceImpl extends ServiceImpl<DataChinaCityMapper, DataChinaCity> implements DataChinaCityService {
 
     private final DataChinaCityMapper dataChinaCityMapper;
+
+	private final SAdministrativeDivisionsService divisionsService;
 
     /**
      * 生成福建省数据概览
@@ -323,4 +327,34 @@ public class DataChinaCityServiceImpl extends ServiceImpl<DataChinaCityMapper, D
         return listProp;
     }
 
+
+	@Override
+	public Page myPage(Page page, DataChinaCityQuery dataChinaCityQuery) {
+		//判断dataChinaCityQuery对象携带的查询参数是城市代号还是城市名
+		if (!CharUtil.isChinese(dataChinaCityQuery.getPro())) {
+			//只需要城市名查询条件
+			String pcityCode = dataChinaCityQuery.getCity();
+			AreaDictVo cityDict = divisionsService.areaTranslate(Long.parseLong(pcityCode));
+			String cityName = cityDict.getLabel();
+			//定义需要省、市命中，需要过滤掉的字。SAdministrativeDivisionsService表里的城市有："省","市","县","区" 等字，而DataChinaCity表没有。
+			String newCityName = CharSequenceUtil
+					.replace(cityName, "市", "")
+					.replace("区", "");
+			dataChinaCityQuery.setCity(newCityName);
+			dataChinaCityQuery.setPro(null);
+		}
+		//DataChinaCity chinaCity = new DataChinaCity();
+		////TODO  dataChinaCityQuery的属性比chinaCity多。不知道会不会报错。
+		//BeanUtil.copyProperties(dataChinaCityQuery,chinaCity);
+
+		String startDate = CharSequenceUtil.replace(dataChinaCityQuery.getStartDate(), " 00:00:00", "");
+		String endDate = CharSequenceUtil.replace(dataChinaCityQuery.getEndDate(), " 00:00:00", "");
+
+		return this.page(page, Wrappers.<DataChinaCity>lambdaQuery()
+				.between(DataChinaCity::getCreateTime
+						, startDate
+						, endDate)
+				.eq(DataChinaCity::getCity, dataChinaCityQuery.getCity())
+		);
+	}
 }
