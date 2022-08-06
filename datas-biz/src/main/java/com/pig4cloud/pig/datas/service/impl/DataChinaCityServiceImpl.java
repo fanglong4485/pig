@@ -18,6 +18,7 @@ package com.pig4cloud.pig.datas.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.text.CharSequenceUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -330,6 +331,9 @@ public class DataChinaCityServiceImpl extends ServiceImpl<DataChinaCityMapper, D
 
 	@Override
 	public Page myPage(Page page, DataChinaCityQuery dataChinaCityQuery) {
+
+		String startDate = CharSequenceUtil.replace(dataChinaCityQuery.getStartDate(), " 00:00:00", "");
+		String endDate = CharSequenceUtil.replace(dataChinaCityQuery.getEndDate(), " 00:00:00", "");
 		//判断dataChinaCityQuery对象携带的查询参数是城市代号还是城市名
 		if (!CharUtil.isChinese(dataChinaCityQuery.getPro())) {
 			//只需要城市名查询条件
@@ -342,19 +346,34 @@ public class DataChinaCityServiceImpl extends ServiceImpl<DataChinaCityMapper, D
 					.replace("区", "");
 			dataChinaCityQuery.setCity(newCityName);
 			dataChinaCityQuery.setPro(null);
+
+			if (ObjectUtil.isNull(startDate) || ObjectUtil.isNull(endDate) ){
+				return this.page(page, Wrappers.<DataChinaCity>lambdaQuery()
+						.eq(DataChinaCity::getCity, dataChinaCityQuery.getCity())
+				);
+			}
+
+			return this.page(page, Wrappers.<DataChinaCity>lambdaQuery()
+					.between(DataChinaCity::getCreateTime
+							, startDate
+							, endDate)
+					.eq(DataChinaCity::getCity, dataChinaCityQuery.getCity())
+			);
 		}
-		//DataChinaCity chinaCity = new DataChinaCity();
-		////TODO  dataChinaCityQuery的属性比chinaCity多。不知道会不会报错。
-		//BeanUtil.copyProperties(dataChinaCityQuery,chinaCity);
+		//如果只根据日期查询
+		else if (ObjectUtil.isNull(dataChinaCityQuery.getPro()) && ObjectUtil.isNotNull(dataChinaCityQuery.getStartDate())){
+			return this.page(page, Wrappers.<DataChinaCity>lambdaQuery()
+					.between(DataChinaCity::getCreateTime
+							, startDate
+							, endDate)
+			);
+		}
+		else {
+			DataChinaCity chinaCity = new DataChinaCity();
+			BeanUtil.copyProperties(dataChinaCityQuery,chinaCity);
+			return this.page(page,Wrappers.<DataChinaCity>lambdaQuery(chinaCity));
+		}
 
-		String startDate = CharSequenceUtil.replace(dataChinaCityQuery.getStartDate(), " 00:00:00", "");
-		String endDate = CharSequenceUtil.replace(dataChinaCityQuery.getEndDate(), " 00:00:00", "");
-
-		return this.page(page, Wrappers.<DataChinaCity>lambdaQuery()
-				.between(DataChinaCity::getCreateTime
-						, startDate
-						, endDate)
-				.eq(DataChinaCity::getCity, dataChinaCityQuery.getCity())
-		);
 	}
+
 }
