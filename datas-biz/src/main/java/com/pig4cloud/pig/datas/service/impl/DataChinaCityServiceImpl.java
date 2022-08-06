@@ -19,6 +19,7 @@ package com.pig4cloud.pig.datas.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -332,8 +333,8 @@ public class DataChinaCityServiceImpl extends ServiceImpl<DataChinaCityMapper, D
 	@Override
 	public Page myPage(Page page, DataChinaCityQuery dataChinaCityQuery) {
 
-		String startDate = CharSequenceUtil.replace(dataChinaCityQuery.getStartDate(), " 00:00:00", "");
-		String endDate = CharSequenceUtil.replace(dataChinaCityQuery.getEndDate(), " 00:00:00", "");
+		String startDate = StrUtil.subBefore(dataChinaCityQuery.getStartDate(), " ",true);
+		String endDate = StrUtil.subBefore(dataChinaCityQuery.getEndDate(), " ",true);
 		//判断dataChinaCityQuery对象携带的查询参数是城市代号还是城市名
 		if (!CharUtil.isChinese(dataChinaCityQuery.getPro())) {
 			//只需要城市名查询条件
@@ -350,6 +351,12 @@ public class DataChinaCityServiceImpl extends ServiceImpl<DataChinaCityMapper, D
 			if (ObjectUtil.isNull(startDate) || ObjectUtil.isNull(endDate) ){
 				return this.page(page, Wrappers.<DataChinaCity>lambdaQuery()
 						.eq(DataChinaCity::getCity, dataChinaCityQuery.getCity())
+				);
+			}
+			else if (Objects.equals(startDate, endDate)){
+				return this.page(page,Wrappers.<DataChinaCity>lambdaQuery()
+						.eq(DataChinaCity::getCity,dataChinaCityQuery.getCity())
+						.likeRight(DataChinaCity::getCreateTime,startDate)
 				);
 			}
 
