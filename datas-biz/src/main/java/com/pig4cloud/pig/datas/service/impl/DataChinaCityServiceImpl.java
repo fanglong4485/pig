@@ -367,8 +367,14 @@ public class DataChinaCityServiceImpl extends ServiceImpl<DataChinaCityMapper, D
 					.eq(DataChinaCity::getCity, dataChinaCityQuery.getCity())
 			);
 		}
-		//如果只根据日期查询
-		else if (ObjectUtil.isNull(dataChinaCityQuery.getPro()) && ObjectUtil.isNotNull(dataChinaCityQuery.getStartDate())){
+		//如果开始日期和结束日期都不为空
+		else if (ObjectUtil.isNull(dataChinaCityQuery.getPro()) && ObjectUtil.isNotNull(dataChinaCityQuery.getStartDate()) && ObjectUtil.isNotNull(dataChinaCityQuery.getEndDate())){
+			//查询某一天
+			if (startDate.equals(endDate)){
+				return this.page(page,Wrappers.<DataChinaCity>lambdaQuery()
+						.likeRight(DataChinaCity::getCreateTime,startDate));
+			}
+			//查询某段时间
 			return this.page(page, Wrappers.<DataChinaCity>lambdaQuery()
 					.between(DataChinaCity::getCreateTime
 							, startDate
