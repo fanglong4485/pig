@@ -2,6 +2,8 @@ package com.pig4cloud.pig.datas;
 
 import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.pig4cloud.pig.datas.service.DataChinaCityService;
 import com.pig4cloud.pig.datas.utils.DatesUtil;
 import com.pig4cloud.pig.datas.entity.DataChinaCity;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,5 +72,15 @@ public class test {
 	void test4(){
 		Map citiesTrend = dataChinaCityService.getCitiesTrend();
 		System.out.println(citiesTrend);
+	}
+
+	@Test
+	void test5(){
+		Map<SFunction<DataChinaCity,?>, Object> map = new HashMap<>();
+		map.put(DataChinaCity::getCity,"三沙");
+		List<DataChinaCity> list = dataChinaCityService.list(Wrappers.<DataChinaCity>lambdaQuery().allEq(map));
+		list.forEach(item->{
+			System.out.println(item.getCity());
+		});
 	}
 }
