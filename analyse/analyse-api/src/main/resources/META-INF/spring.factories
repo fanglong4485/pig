@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.pig4cloud.pig.analyse.api.feign.factory.RemoteDataServiceFallbackFactory,\
+  com.pig4cloud.pig.analyse.api.feign.fallback.RemoteDataServiceFallbackImpl
